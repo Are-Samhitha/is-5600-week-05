@@ -1,6 +1,8 @@
 const path = require('path')
 const Products = require('./products')
 const autoCatch = require('./lib/auto-catch')
+const Orders = require('./orders')
+const router = express.Router();
 
 /**
  * Handle the root route
@@ -9,6 +11,17 @@ const autoCatch = require('./lib/auto-catch')
 */
 function handleRoot(req, res) {
   res.sendFile(path.join(__dirname, '/index.html'));
+}
+
+/**
+ * Create a new product
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function createProduct (req, res, next) {
+  const product = await Products.create(req.body)
+  res.json(product)
 }
 
 /**
@@ -83,3 +96,28 @@ module.exports = autoCatch({
   editProduct,
   deleteProduct
 });
+
+// api.js
+
+/**
+ * Update a product
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function editProduct (req, res, next) {
+  const change = req.body
+  const product = await Products.edit(req.params.id, change)
+  res.json(product)
+}
+
+/**
+ * Delete a product
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function deleteProduct (req, res, next) {
+  const response = await Products.destroy(req.params.id)
+  res.json(response)
+}
